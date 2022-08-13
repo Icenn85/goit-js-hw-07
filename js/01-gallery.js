@@ -28,34 +28,28 @@ const createImagesGalleryMarkup = (images) => {
 const galleryMarkup = createImagesGalleryMarkup(galleryItems);
 galleryContainer.insertAdjacentHTML("beforeend", galleryMarkup);
 
+const instance = basicLightbox.create(`<img src="" />`, {
+  onShow: (instance) => {
+    window.addEventListener("keydown", onEscapeClick);
+  },
+  onClose: (instance) => {
+    window.removeEventListener("keydown", onEscapeClick);
+  },
+});
+
+const onEscapeClick = (evt) => {
+  if (evt.code === "Escape") {
+    instance.close();
+  }
+};
+
 galleryContainer.addEventListener("click", onGalleryContainerClick);
-window.addEventListener("keydown", onCloseModalByEsc);
-
-
 
 function onGalleryContainerClick(evt) {
     evt.preventDefault();
     if (!evt.target.classList.contains('gallery__image')) {
         return;
     }
-    const galleryOriginImg = evt.target.dataset.source;
-
-    const instance = basicLightbox.create(`
-    <img src="${galleryOriginImg}"width="1200" height="800">`);
+    instance.element().querySelector("img").src = evt.target.dataset.source;
     instance.show();
-
-        window.addEventListener("keydown", (evt) => {
-          if (evt.code === "Escape") {
-            instance.close();
-          }
-        });
-
-        window.removeEventListener("keydown", (evt) => {
-          if (evt.code === "Escape") {
-            instance.close();
-          }
-        });
-    
-
-
 }
